@@ -1,13 +1,13 @@
+# Import TestClient so we can send simulated HTTP requests
 from fastapi.testclient import TestClient
 
 # Import application object defined in main.py
-from main import app
 from main import create_app
 import pytest
 
 class FakeIrisModel:
     def predict(self, features):
-        # A
+        # Always return class 0
         return [0]
 
 def fake_model_loader():
@@ -15,6 +15,7 @@ def fake_model_loader():
 
 def fake_version_loader():
     return "test-version"
+
 
 @pytest.fixture
 def client():
@@ -27,9 +28,9 @@ def client():
         yield test_client
 
 # Reusable test client for all tests
-client = TestClient(app)
+# client = TestClient(app)
 
-def test_health_endpoint():
+def test_health_endpoint(client):
     """
     Verify that the application is running and can respond to a health check request.
     """
@@ -39,7 +40,7 @@ def test_health_endpoint():
     assert response.json() == {"status": "healthy"}
     assert response.json()["model_version"] == "test-version"
 
-def test_valid_iris_prediction():
+def test_valid_iris_prediction(client):
     """
     Verify that we are getting valid predictions
     """
@@ -63,6 +64,3 @@ def test_valid_iris_prediction():
 
     assert result["class_name"] in ["setosa", "versicolor", "virginica"]
     assert result["prediction"] in [0, 1, 2]
-
-
-def create_api(model_loader: Callable=load_mlflow_model,)
