@@ -13,11 +13,11 @@ from typing import Callable
 
 # MLFlow Configuration
 MLFLOW_TRACKING_URI = os.getenv(
-    "MLFLOW_TRACKING_URI", "https://127.0.0.1:6001"
+    "MLFLOW_TRACKING_URI", "http://127.0.0.1:6001"
 )
 
-# Model URI: models:/iris-classifier@champion
-MODEL_URI = "models:/iris-classifier@champion"
+# Model URI: models:/iris_classifier@champion
+MODEL_URI = "models:/iris_classifier@champion"
 
 
 def load_mlflow_model():
@@ -45,7 +45,7 @@ def create_app(model_loader: Callable=load_mlflow_model,
         def version_loader():
             client = mlflow.MlflowClient(tracking_uri=MLFLOW_TRACKING_URI)
             champion = client.get_model_version_by_alias(
-                        name="iris-classifier",
+                        name="iris_classifier",
                         alias="champion"
                     )
             return champion.version
@@ -81,7 +81,7 @@ def create_app(model_loader: Callable=load_mlflow_model,
     def health_check():
         return {
             "status": "healthy",
-            "model_name": "iris-classifier",
+            "model_name": "iris_classifier",
             "model_version": app.state.model_version
             }
 
@@ -89,12 +89,12 @@ def create_app(model_loader: Callable=load_mlflow_model,
     def predict(data: IrisRequest, request: Request):
         model = request.app.state.model
 
-        features = [{
+        features = [[
             data.sepal_length,
             data.sepal_width,
             data.petal_length,
             data.petal_width
-        }]
+        ]]
 
         prediction = int(model.predict(features)[0])
 

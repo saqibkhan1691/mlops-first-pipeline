@@ -37,7 +37,8 @@ def test_health_endpoint(client):
 
     response = client.get("/health")
     assert response.status_code == 200
-    assert response.json() == {"status": "healthy"}
+    # assert response.json() == {"status": "healthy"}
+    assert response.json()["status"] == "healthy"
     assert response.json()["model_version"] == "test-version"
 
 def test_valid_iris_prediction(client):
@@ -60,7 +61,7 @@ def test_valid_iris_prediction(client):
 
     result = response.json()
     assert "prediction" in result
-    assert "class_input" in result
+    assert "class_name" in result
 
     assert result["class_name"] in ["setosa", "versicolor", "virginica"]
     assert result["prediction"] in [0, 1, 2]

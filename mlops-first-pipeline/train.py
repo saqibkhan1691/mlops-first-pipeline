@@ -56,8 +56,8 @@ with mlflow.start_run() as run:
 
     #Calculate metrics that help us evaluate the classifier
     accuracy = accuracy_score(y_test, y_pred)
-    precision = precision_score(y_test, y_pred, zero_division=0)
-    recall = recall_score(y_test, y_pred, zero_division=0)
+    precision = precision_score(y_test, y_pred, average="weighted", zero_division=0)
+    recall = recall_score(y_test, y_pred, average="weighted", zero_division=0)
 
     # Model Quality Gate
     MIN_TEST_ACCURACY = 0.90
@@ -122,7 +122,7 @@ with mlflow.start_run() as run:
 
     # Assign the alias only after model has passed quality gate
     client.set_registered_model_alias(
-        name="iris-classifier",
+        name="iris_classifier",
         alias="champion",
         version=current_model_version.version
     )
@@ -132,4 +132,4 @@ with mlflow.start_run() as run:
         f"{current_model_version.version}"
     )
 
-    print("Registered Model: iris-classifier")
+    print("Registered Model: iris_classifier")
